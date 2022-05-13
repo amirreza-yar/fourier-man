@@ -6,11 +6,13 @@
 """
 
 import numpy as np
-from numpy import \
+# IMPORTING THE MODULES TO EVALUATE THE INPUT TO A PYTHON FUNCTION
+from numpy import (
     cos, cosh, arccos, sin, sinh, arcsin, tan, tanh, arctan, log, log2, log10, sqrt, pi, exp
+)
 from scipy import integrate
 
-class FourierFunc:
+class FourierSeries:
     def __init__ (self, T, T1, T2, m, input_xt):
         # DEFINING THE INPUTS FOR SYNTHESIS AND ANALYSIS EQUATIONS OF CT-FOURIER SERIES
         self.T = T
@@ -35,11 +37,3 @@ class FourierFunc:
     def xt (self, t):
         xt_result = self._ak_0 () +  np.real (sum ([self._ak_m (k) * self._exp_func (t, k) for k in range (-self.m, self.m) if k != 0]))
         return xt_result
-
-# time = np.linspace (-5, 5, 200)
-
-# my_func = FourierFunc (3, -1, 2, 5, "t**3")
-
-# plt.plot (time, my_func.xt (time), 'r-')
-# plt.grid ()
-# plt.show ()

@@ -1,16 +1,13 @@
 import functools
 import sys
-from time import time
-from turtle import width
-from PyQt5.QtWidgets import \
+from PyQt5.QtWidgets import (
     QApplication, QPushButton, QCheckBox, QVBoxLayout, QHBoxLayout, QMainWindow, QWidget, QGroupBox, QLineEdit
+)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from matplotlib.pyplot import draw
 import numpy as np
-from time import sleep
 
-from fourier_func_model import FourierFunc
+from bin.fourier_series_model import FourierFunc
 
 # CREATIGN THE MATPLOTLIB API TO WORK WITH PYPLOT
 class PltCanvas(FigureCanvasQTAgg):

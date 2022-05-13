@@ -1,5 +1,5 @@
 from cgi import test
-from bin.fourier_func_model import FourierFunc
+from bin.fourier_series_model import FourierFunc
 # from qt_test import CalculatorMain
 
 from PyQt5.QtWidgets import QApplication
