@@ -7,7 +7,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 import numpy as np
 
-from bin.fourier_series_model import FourierFunc
+from fourier_series_model import FourierSeries
 
 # CREATIGN THE MATPLOTLIB API TO WORK WITH PYPLOT
 class PltCanvas(FigureCanvasQTAgg):
@@ -45,7 +45,7 @@ class UserInterface(QMainWindow):
 
     def _find_series(self, time = 0):
         input_func_text = self.input_func.text()
-        myfunction = FourierFunc(3, -1, 2, 5, input_func_text)
+        myfunction = FourierSeries(3, -1, 2, 200, input_func_text)
         return myfunction.xt(time)
 
     def _draw_button(self):
