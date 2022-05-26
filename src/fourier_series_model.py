@@ -20,7 +20,7 @@ class FourierSeries:
         self.T2 = T2
         self.m = m
         # EVALUATING THE STRING INPUT OF USE TO PYTHON EXPRESSION
-        self.input_xt = lambda t: eval (input_xt)
+        self.input_xt = input_xt
 
     def _ak_0 (self):
         # 
