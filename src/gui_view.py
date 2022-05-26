@@ -1,4 +1,4 @@
-# IMPORTING THE NEEDED MODULES FROM PYAT5 AND NUMPY
+# IMPORTING THE NEEDED MODULES FROM PYAT5, NUMPY, MATPLOTLIB, SYS
 from PyQt5.QtWidgets import (
     QApplication, QPushButton, QCheckBox, QVBoxLayout, QHBoxLayout, QMainWindow, QWidget, QGroupBox, QLineEdit, QTableWidget,
     QHeaderView, QSizePolicy, QAbstractScrollArea, QMenuBar, QMenu, QAction, qApp, QStyle, QLabel
@@ -86,8 +86,8 @@ class FourierManGui(QMainWindow):
         self.newAction = QAction(self)
         self.newAction.setText("&New")
         # self.newAction.setIcon()
-        self.openAction = QAction(QIcon(":file-open.svg"), "&Open...", self)
-        self.saveAction = QAction(QIcon(":file-save.svg"), "&Save", self)
+        self.openAction = QAction(QStyle.standardIcon(QStyle.StandardPixmap.SP_ArrowBack), "&Open...")
+        self.saveAction = QAction("&Save", self)
         self.exitAction = QAction("&Exit", self)
         self.exitAction.setShortcut("Ctrl+q")
 
