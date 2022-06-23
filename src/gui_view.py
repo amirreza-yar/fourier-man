@@ -1,26 +1,17 @@
-# IMPORTING THE NEEDED MODULES FROM PYAT5, NUMPY, MATPLOTLIB, SYS
+# IMPORTING THE NEEDED MODULES FROM PYAT5, NUMPY, SYS
 import time
 from PyQt5.QtWidgets import (
     QApplication, QPushButton, QCheckBox, QVBoxLayout, QHBoxLayout, QMainWindow, QWidget, QGroupBox, QLineEdit, QTableWidget,
     QHeaderView, QSizePolicy, QAbstractScrollArea, QMenuBar, QMenu, QAction, qApp, QStyle, QLabel, QTableWidgetItem
 )
 from PyQt5.QtGui import QIcon
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
 import numpy as np
 import sys
-from ast import literal_eval
 from functools import partial
 
 # IMPORTING THE LOCAL MODULES
-from fourier_series_model import FourierSeries
-
-# CREATIGN THE MATPLOTLIB API CLASS TO WORK ON PYPLOT SYS
-class PltCanvas(FigureCanvasQTAgg):
-    def __init__(self, parent = None, width = 5, height = 4, dpi = 100) -> None:
-        # SETTING THE FIGURE INSTANCE
-        self.fig = Figure(figsize=(width, height), dpi=dpi)
-        super(PltCanvas, self).__init__(self.fig)
+from .fourier_series_model import FourierSeries
+from .matplotlib_qt_api import PltCanvas
 
 class FourierManGui(QMainWindow):
     def __init__(self, parent = None) -> None:
@@ -51,15 +42,73 @@ class FourierManGui(QMainWindow):
         leftSideLayout.addWidget(self._createDrawButton())
         self._centralLayout.addLayout(leftSideLayout)
 
-
     def _createInputSection(self):
         inputGroupBox, inputGroupBoxLayout = self._createInputGroupBox()
         # ADDING FUNCTION TABLE
         inputGroupBoxLayout.addWidget(self._createInputTable())
+        inputGroupBoxLayout.addLayout(self._createTime())
         inputGroupBoxLayout.addLayout(self._createTimePeriodLineEdit())
         inputGroupBoxLayout.addLayout(self._createIntegralBoundaiesLineEdit())
+        inputGroupBoxLayout.addLayout(self._createHarmonicLineEdit())
         return inputGroupBox
         #TODO ADD HARMONY PART
+
+    def _createInputGroupBox(self):
+        inputGroupBox = QGroupBox("Input Section")
+        inputGroupBoxLayout = QVBoxLayout()
+        inputGroupBox.setLayout(inputGroupBoxLayout)
+        inputGroupBox.setSizePolicy(self._stretchSizePolicy(2))
+        inputGroupBox.setMinimumSize(250, 350)
+        inputGroupBox.setMaximumWidth(350)
+        return inputGroupBox, inputGroupBoxLayout
+    
+    def _createTime(self):
+        timeLayout = QHBoxLayout()
+        timeLayout.addWidget(QLabel("Time is"))
+        self.timeLowerBound = QLineEdit()
+        self.timeLowerBound.setText("-5")
+        timeLayout.addWidget(self.timeLowerBound)
+        timeLayout.addWidget(QLabel("to"))
+        self.timeUpperBound = QLineEdit()
+        self.timeUpperBound.setText("5")
+        timeLayout.addWidget(self.timeUpperBound)
+        timeLayout.addWidget(QLabel("with"))
+        self.timeSamples = QLineEdit()
+        self.timeSamples.setText("500")
+        timeLayout.addWidget(self.timeSamples)
+        timeLayout.addWidget(QLabel("samples"))
+        self.time = np.linspace(int(self.timeLowerBound.text()),
+                                int(self.timeUpperBound.text()), 
+                                int(self.timeSamples.text()))
+        return timeLayout
+
+    def _createTimePeriodLineEdit(self):
+        timePriodLayout = QHBoxLayout()
+        timePriodLayout.addWidget(QLabel("Time period is "))
+        self.timePeriod = QLineEdit()
+        self.timePeriod.setText("2")
+        timePriodLayout.addWidget(self.timePeriod)
+        return timePriodLayout
+
+    def _createIntegralBoundaiesLineEdit(self):
+        integralBoundariesLayout = QHBoxLayout()
+        integralBoundariesLayout.addWidget(QLabel("Integration boundaries are from"))
+        self.integrationLowerBound = QLineEdit()
+        self.integrationLowerBound.setText("-1")
+        integralBoundariesLayout.addWidget(self.integrationLowerBound)
+        integralBoundariesLayout.addWidget(QLabel("to"))
+        self.integrationUpperBound = QLineEdit()
+        self.integrationUpperBound.setText("1")
+        integralBoundariesLayout.addWidget(self.integrationUpperBound)
+        return integralBoundariesLayout
+
+    def _createHarmonicLineEdit(self):
+        harmonicLayout = QHBoxLayout()
+        harmonicLayout.addWidget(QLabel("Harmonic is "))
+        self.harmonic = QLineEdit()
+        self.harmonic.setText("10")
+        harmonicLayout.addWidget(self.harmonic)
+        return harmonicLayout
 
     def _createGraphControlSection(self):
         graphControlGroupBox = QGroupBox("Graph Control Section")
@@ -75,7 +124,7 @@ class FourierManGui(QMainWindow):
         return graphControlGroupBox
         #TODO ADD HARMONY CHANGER TO THIS PART
         #TODO ADD CHANGE GRAPH VIEW HOR TO VER OR REVERSE
-        #TODO SHOULD HAVE CHANGE RAPH COLOR PART
+        #TODO SHOULD HAVE CHANGE GRAPH COLOR PART
         #TODO ADD XLIM AND YLIM PART
         
     def _createGraphControlGroupBox(self):
@@ -83,34 +132,6 @@ class FourierManGui(QMainWindow):
         graphControlGroupBoxLayout = QHBoxLayout()
         graphControlGroupBox.setLayout(graphControlGroupBoxLayout)
         return graphControlGroupBox, graphControlGroupBoxLayout
-
-    
-    def _createIntegralBoundaiesLineEdit(self):
-        integralBoundariesLayout = QHBoxLayout()
-        integralBoundariesLayout.addWidget(QLabel("Integration boundaries are from"))
-        self.integrationLowerBound = QLineEdit()
-        integralBoundariesLayout.addWidget(self.integrationLowerBound)
-        integralBoundariesLayout.addWidget(QLabel("to"))
-        self.integrationUpperBound = QLineEdit()
-        integralBoundariesLayout.addWidget(self.integrationUpperBound)
-        return integralBoundariesLayout
-    
-    def _createTimePeriodLineEdit(self):
-        timePriodLayout = QHBoxLayout()
-        timePriodLayout.addWidget(QLabel("Time period is "))
-        self.timePriod = QLineEdit()
-        timePriodLayout.addWidget(self.timePriod)
-        return timePriodLayout
-
-    def _createInputGroupBox(self):
-        inputGroupBox = QGroupBox("Input Section")
-        inputGroupBoxLayout = QVBoxLayout()
-        inputGroupBox.setLayout(inputGroupBoxLayout)
-        inputGroupBox.setSizePolicy(self._stretchSizePolicy(2))
-        inputGroupBox.setMinimumSize(250, 350)
-        inputGroupBox.setMaximumWidth(350)
-        return inputGroupBox, inputGroupBoxLayout
-        
 
     def _createMenubar(self):
         
@@ -187,6 +208,7 @@ class FourierManGui(QMainWindow):
         self.inputTable.item(0, 0).setText("2*t + 1")
         self.inputTable.item(0, 1).setText("t>0")
         return self.inputTable
+        #TODO SHOULD MOVE self.inputTable.cellChanged.connect(self._addNewTableRowTrigger) TO CONTROLS
         #TODO SHOULD MOVE TRIGGER FUNCTIONS TO A DIFFRENT FILE
     
     def _addNewTableRowTrigger(self, row):
@@ -242,7 +264,11 @@ class FourierManGui(QMainWindow):
         return lambda t: np.piecewise (t, [eval(bond, {}, {"t": t}) for bond in boundArray], functionsList)
 
     def _findSeries(self, time = 0):
-        myfunction = FourierSeries(2, -1, 1, 300, self._evaluateTableFunction())
+        T = int(self.timePeriod.text())
+        T1 = int(self.integrationLowerBound.text())
+        T2 = int(self.integrationUpperBound.text())
+        harmonic = int(self.harmonic.text())
+        myfunction = FourierSeries(T, T1, T2, harmonic, self._evaluateTableFunction())
         return myfunction.xt(time)
         #TODO SHOULD ADD A VALIDATOR PART TO CATCH ERRORS
 
@@ -259,32 +285,32 @@ class FourierManGui(QMainWindow):
         drawButton = QPushButton("Draw")
         drawButton.setShortcut("Ctrl+Return")
         drawButton.clicked.connect(self._drawNewGraph)
+        drawButton.setShortcut("Ctrl+D")
         return drawButton
 
     def _drawNewGraph(self):
-        #TODO SHOULD HAVE A SHORTCUT
         self.xtFig.canvas.flush_events()
-        time = np.linspace(-5, 5, 500)
-        newSeries = self._findSeries(time)
-        self.ax1.set_ylim ([np.min(newSeries) - 0.2, np.max(newSeries) + 0.2])
+        self.time = np.linspace(int(self.timeLowerBound.text()),
+                                int(self.timeUpperBound.text()), 
+                                int(self.timeSamples.text()))
+        newSeries = self._findSeries(self.time)
+        self.ax1.set_xlim([np.min(self.time) - 0.2, np.max(self.time) + 0.2])
+        self.ax1.set_ylim([np.min(newSeries) - 0.2, np.max(newSeries) + 0.2])
         self.line1.set_ydata(newSeries)
         self.xtFig.canvas.draw()
         self._evaluateTableFunction()
-    
-
 
     def _createGraph(self):
         xtGraph = PltCanvas()
-        time = np.linspace(-5, 5, 500)
         self.xtFig = xtGraph.fig
         self.ax1 = self.xtFig.add_subplot(111)
-        xtData = self._findSeries(time)
+        xtData = self._findSeries(self.time)
         self.ax1.set_ylim ([np.min(xtData) - 0.2, np.max(xtData) + 0.2])
-        self.line1, = self.ax1.plot(time, xtData, 'r-')
+        self.line1, = self.ax1.plot(self.time, xtData, 'r-')
         return xtGraph
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    win = FourierManGui()
-    win.show()
-    sys.exit(app.exec_())
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     win = FourierManGui()
+#     win.show()
+#     sys.exit(app.exec_())
